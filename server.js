@@ -16,11 +16,11 @@ app.use(bodyParser.json());
 
 // ✅ Logger middleware (must be before routes)
 app.use((req, res, next) => {
-  if(req.body != undefined)
-  console.log(`${req.method} ${req.originalUrl}`, req.body);
-else{
-  console.log(`${req.method} ${req.originalUrl}`);
-}
+  if (req.body != undefined)
+    console.log(`${req.method} ${req.originalUrl}`, req.body);
+  else {
+    console.log(`${req.method} ${req.originalUrl}`);
+  }
   next();
 });
 
@@ -52,4 +52,7 @@ app.use(
   jobRoutes
 );
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+});
