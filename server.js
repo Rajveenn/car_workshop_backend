@@ -1,7 +1,7 @@
+// File: server.js (or index.js)
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 
@@ -11,48 +11,47 @@ const authRoutes = require("./routes/auth");
 dotenv.config();
 const app = express();
 
+// Enable CORS and JSON parsing
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// ✅ Logger middleware (must be before routes)
+// Logger middleware (logs method, URL, body)
 app.use((req, res, next) => {
-  if (req.body != undefined)
-    console.log(`${req.method} ${req.originalUrl}`, req.body);
-  else {
-    console.log(`${req.method} ${req.originalUrl}`);
-  }
+  console.log(`${req.method} ${req.originalUrl}`, req.body || "");
   next();
 });
 
-mongoose.connect(
-  "mongodb+srv://anbaa:Rj2U2AkuKf5UWZ1x@master.v3hazyp.mongodb.net/?retryWrites=true&w=majority&appName=master",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log("MongoDB connected")).catch(err => console.error("MongoDB error", err));
 
-// Routes
+// Auth routes
+// Support both /auth and /api/auth for login/register
+app.use("/auth", authRoutes);
 app.use("/api/auth", authRoutes);
 
-app.use(
-  "/api/jobs",
-  (req, res, next) => {
-    // console.log(req.headers.authorization)
-    const token = req.headers.authorization?.split(" ")[1];
-    // console.log(token)
-    if (!token) return res.status(401).send("Missing token");
+// JWT authentication middleware for protected routes
+function authenticateJWT(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) return res.status(401).send({ message: "Missing token" });
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) return res.status(401).send("Invalid token");
-      req.user = user;
-      next();
-    });
-  },
-  jobRoutes
-);
+  const token = authHeader.split(' ')[1];
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(401).send({ message: "Invalid token" });
+    req.user = user;
+    next();
+  });
+}
+
+// Job routes (protected)
+// GET /jobs, POST /jobs, etc.
+app.use("/jobs", authenticateJWT, jobRoutes);
+app.use("/api/jobs", authenticateJWT, jobRoutes);
+
+// Healthcheck
+app.get("/", (req, res) => res.send("API is running"));
 
 const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-});
+app.listen(port, () => console.log(`Server listening on port ${port}`));
