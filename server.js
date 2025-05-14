@@ -30,10 +30,8 @@ app.use((req, res, next) => {
 });
 
 // routes
-app.use("/auth", authRoutes);
 app.use("/api/auth", authRoutes);
 
-app.use("/car", carRoutes);
 app.use("/api/car", carRoutes);
 
 // JWT authentication middleware for protected endpoints
@@ -52,7 +50,7 @@ function authenticateJWT(req, res, next) {
   });
 }
 
-app.use("/jobs", authenticateJWT, jobRoutes);
+// Secure Routes
 app.use("/api/jobs", authenticateJWT, jobRoutes);
 
 // Health check
