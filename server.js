@@ -29,6 +29,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// routes
+app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
+
+app.use("/car", carRoutes);
+app.use("/api/car", carRoutes);
+
 // JWT authentication middleware for protected endpoints
 function authenticateJWT(req, res, next) {
   const authHeader = req.headers.authorization;
@@ -45,13 +52,8 @@ function authenticateJWT(req, res, next) {
   });
 }
 
-// routes
-app.use("/auth", authRoutes);
-app.use("/api/auth", authRoutes);
 app.use("/jobs", authenticateJWT, jobRoutes);
 app.use("/api/jobs", authenticateJWT, jobRoutes);
-app.use("/car", carRoutes);
-app.use("/api/car", carRoutes);
 
 // Health check
 app.get("/", (req, res) => res.send("API is running"));
