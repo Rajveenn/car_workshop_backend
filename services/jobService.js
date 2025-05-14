@@ -101,8 +101,9 @@ module.exports = {
   //   },
 
   calculateEarnings: async function ({ range, start, end }) {
+    console.log(start)
     try {
-      let filter = { status: "Completed" };
+      let filter = {};
 
       if (start && end) {
         filter.jobDate = { $gte: new Date(start), $lte: new Date(end) };
@@ -129,6 +130,7 @@ module.exports = {
       }
 
       const jobs = await Job.find(filter);
+      console.log(jobs)
       const total = jobs.reduce((sum, job) => sum + job.totalCost, 0);
       return { totalEarnings: total, count: jobs.length };
     } catch (error) {
