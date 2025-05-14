@@ -1,8 +1,6 @@
 // File: services/jobService.js
 const Job = require("../models/Job");
-const PDFDocument = require("pdfkit");
 const cloudinary = require("../utils/cloudinary");
-const streamifier = require("streamifier");
 
 module.exports = {
   fetchAllJobs: async function () {
