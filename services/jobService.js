@@ -1,6 +1,5 @@
 // File: services/jobService.js
 const Job = require("../models/Job");
-const cloudinary = require("../utils/cloudinary");
 
 module.exports = {
   fetchAllJobs: async function () {
