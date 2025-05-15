@@ -8,10 +8,10 @@ require("dotenv").config();
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  if (!user || !user.isAdmin) return res.status(403).send("Unauthorized");
+  if (!user || !user.isAdmin) return res.status(403).send("Email not found");
 
   const match = await bcrypt.compare(password, user.password);
-  if (!match) return res.status(403).send("Unauthorized");
+  if (!match) return res.status(403).send("Incorrect Password Entered");
 
   const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
   res.json({ token });
