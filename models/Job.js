@@ -23,8 +23,13 @@ const JobSchema = new mongoose.Schema(
     jobDate: { type: Date, required: true },
     whatsappUrl: { type: String },
     pdfUrl: { type: String },
-    invoiceNumber: { type: String },
-    status: { type: String, enum: ["PJPP", "PP" , "PJ" , "Completed"], default: "PJPP" },
+    invoiceNumber: { type: String, default: 0 },
+    status: {
+      type: String,
+      enum: ["PJPP", "PP", "PJ", "Completed"],
+      default: "PJPP",
+    },
+    editCount: { type: Number },
     createdAt: { type: Date, default: Date.now },
   },
   {
