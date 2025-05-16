@@ -24,6 +24,7 @@ const JobSchema = new mongoose.Schema(
     whatsappUrl: { type: String },
     pdfUrl: { type: String },
     invoiceNumber: { type: String },
+    status: { type: String, enum: ["PJPP", "PP" , "PJ" , "Completed"], default: "PJPP" },
     createdAt: { type: Date, default: Date.now },
   },
   {
