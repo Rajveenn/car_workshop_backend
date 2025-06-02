@@ -14,7 +14,8 @@ module.exports = {
 
   createJob: async function (req, res) {
     const job = await jobService.saveNewJob(req.body);
-    res.status(201).json(job);
+    if (!job) return res.status(404).send("Job not added");
+    res.json(job);
   },
 
   updateJob: async function (req, res) {
